@@ -1,14 +1,21 @@
 var express = require('express');
+var exphbs = require('express-handlebars');
 var path = require('path');
-var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
+var multer  = require('multer');
+var storage = multer.memoryStorage();
+var upload = multer({ storage: storage });
 
 var app = express();
 
-app.use(express.static(path.join(__dirname, 'views')));
+
+var hbs = exphbs.create({});
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
+
 
 app.get('/', function(req, res){
-  res.sendFile('/views/index.html');
+  res.render('home');
 });
 
 app.post('/get-file-size', upload.single('file'), function(req, res){
@@ -16,9 +23,8 @@ app.post('/get-file-size', upload.single('file'), function(req, res){
 });
 
 
-var port = 8080;
+var port = process.argv[2];
+
 app.listen(port, function() {
   console.log('server listening on port ' + port);
-  console.log('https://freecodecamp-husseinraoouf.c9users.io');
 });
-
